@@ -5,6 +5,7 @@ use std::fmt::{Display, Formatter};
 
 #[derive(Debug)]
 enum InputError {
+    InvalidInput,
     EmptyInput,
 }
 
@@ -14,6 +15,7 @@ impl Display for InputError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::EmptyInput => write!(f, "Empty string!"),
+            Self::InvalidInput => write!(f, "Invalid Input: Please type in the correct action.")
         }
     }
 }
@@ -54,6 +56,10 @@ impl StopWatch {
         println!("Stopwatch: Type in \"Start\" to begin and \"Stop\" to end!");
         let mut buffer = get_user_input()?;
 
+        if let false = buffer.contains("Start") {
+            return Err(InputError::InvalidInput)
+        }
+
         while buffer.contains("Start") {
             let now = Instant::now();
 
@@ -64,7 +70,7 @@ impl StopWatch {
                     println!("Total time elapsed: {} seconds!", now.elapsed().as_secs());
                     break
                 }
-                false => panic!("Invalid Input: Please type in the correct action."),
+                false => return Err(InputError::InvalidInput),
             }
         }
         Ok(())
